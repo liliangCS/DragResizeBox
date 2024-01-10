@@ -24,12 +24,12 @@ const defaultOptions = {
 
 class DragResizeBox {
   constructor(domEl, options) {
+    this.options = Object.assign({ ...defaultOptions }, options);
     this.domEl = domEl;
-    this.dragDomEl = document.querySelector(options.dragSelector);
-    if (options.dragSelector !== null && !this.dragDomEl) {
+    this.dragDomEl = document.querySelector(this.options.dragSelector);
+    if (this.options.dragSelector !== null && !this.dragDomEl) {
       throw new Error("Options Error: dragSelector is invalid.");
     }
-    this.options = Object.assign(defaultOptions, options);
     this.init();
   }
 
@@ -39,6 +39,7 @@ class DragResizeBox {
     this.domEl.style.top = this.options.top + "px";
     this.domEl.style.zIndex = this.options.zIndex;
     this.domEl.style.cursor = this.options.dragSelector === null ? "move" : "auto";
+    this.domEl.style.overflow = "hidden";
     // 阻止默认拖拽行为
     this.domEl.ondragstart = (event) => event.preventDefault();
     if (this.dragDomEl) {
@@ -108,7 +109,7 @@ class DragResizeBox {
     leftTop.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
     leftTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
     leftTop.style.cursor = "nw-resize";
-    leftTop.style.backgroundColor = "green";
+    // leftTop.style.backgroundColor = "green";
 
     // rightTop：右上角
     rightTop.style.width = this.options.cornerSize + "px";
@@ -117,7 +118,7 @@ class DragResizeBox {
     rightTop.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
     rightTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
     rightTop.style.cursor = "ne-resize";
-    rightTop.style.backgroundColor = "green";
+    // rightTop.style.backgroundColor = "green";
 
     // rightBottom：右下角
     rightBottom.style.width = this.options.cornerSize + "px";
@@ -126,7 +127,7 @@ class DragResizeBox {
     rightBottom.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
     rightBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
     rightBottom.style.cursor = "se-resize";
-    rightBottom.style.backgroundColor = "green";
+    // rightBottom.style.backgroundColor = "green";
 
     // leftBottom：左下角
     leftBottom.style.width = this.options.cornerSize + "px";
@@ -135,7 +136,7 @@ class DragResizeBox {
     leftBottom.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
     leftBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
     leftBottom.style.cursor = "sw-resize";
-    leftBottom.style.backgroundColor = "green";
+    // leftBottom.style.backgroundColor = "green";
 
     this.domEl.append(leftTop);
     this.domEl.append(rightTop);
@@ -163,7 +164,7 @@ class DragResizeBox {
     left.style.left = -(this.options.borderSize / 2 + borderLeftWidth) + "px";
     left.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
     left.style.cursor = "col-resize";
-    left.style.backgroundColor = "blue";
+    // left.style.backgroundColor = "blue";
 
     // top：上边
     top.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
@@ -172,7 +173,7 @@ class DragResizeBox {
     top.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
     top.style.top = -(this.options.borderSize / 2 + borderTopWidth) + "px";
     top.style.cursor = "row-resize";
-    top.style.backgroundColor = "blue";
+    // top.style.backgroundColor = "blue";
 
     // right：右边
     right.style.width = this.options.borderSize + "px";
@@ -181,7 +182,7 @@ class DragResizeBox {
     right.style.right = -(this.options.borderSize / 2 + borderRightWidth) + "px";
     right.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
     right.style.cursor = "col-resize";
-    right.style.backgroundColor = "blue";
+    // right.style.backgroundColor = "blue";
 
     // bottom：下边
     bottom.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
@@ -190,7 +191,7 @@ class DragResizeBox {
     bottom.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
     bottom.style.bottom = -(this.options.borderSize / 2 + borderBottomWidth) + "px";
     bottom.style.cursor = "row-resize";
-    bottom.style.backgroundColor = "blue";
+    // bottom.style.backgroundColor = "blue";
 
     this.domEl.append(left);
     this.domEl.append(top);
@@ -213,8 +214,8 @@ class DragResizeBox {
       document.onmousemove = (event) => {
         const newWidth = Math.max(this.options.minWidth, Math.min(width + startX - event.clientX, width + left));
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
-        console.log("width:", newWidth);
-        console.log("left:", distanceX);
+        // console.log("width:", newWidth);
+        // console.log("left:", distanceX);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.left = distanceX + "px";
       };
@@ -234,8 +235,8 @@ class DragResizeBox {
       document.onmousemove = (event) => {
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        console.log("height:", newHeight);
-        console.log("top:", distanceY);
+        // console.log("height:", newHeight);
+        // console.log("top:", distanceY);
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.top = distanceY + "px";
       };
@@ -258,8 +259,8 @@ class DragResizeBox {
           Math.min(width + event.clientX - startX, window.innerWidth - left)
         );
         const distanceX = left;
-        console.log("width:", newWidth);
-        console.log("left:", distanceX);
+        // console.log("width:", newWidth);
+        // console.log("left:", distanceX);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.left = distanceX + "px";
       };
@@ -282,8 +283,8 @@ class DragResizeBox {
           Math.min(height + event.clientY - startY, window.innerHeight - top)
         );
         const distanceY = top;
-        console.log("height:", newHeight);
-        console.log("top:", distanceY);
+        // console.log("height:", newHeight);
+        // console.log("top:", distanceY);
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.top = distanceY + "px";
       };
@@ -309,10 +310,10 @@ class DragResizeBox {
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        console.log("width:", newWidth);
-        console.log("height:", newHeight);
-        console.log("left:", distanceX);
-        console.log("top:", distanceY);
+        // console.log("width:", newWidth);
+        // console.log("height:", newHeight);
+        // console.log("left:", distanceX);
+        // console.log("top:", distanceY);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -342,10 +343,10 @@ class DragResizeBox {
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
         const distanceX = left;
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        console.log("width:", newWidth);
-        console.log("height:", newHeight);
-        console.log("left:", distanceX);
-        console.log("top:", distanceY);
+        // console.log("width:", newWidth);
+        // console.log("height:", newHeight);
+        // console.log("left:", distanceX);
+        // console.log("top:", distanceY);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -378,10 +379,10 @@ class DragResizeBox {
         );
         const distanceX = left;
         const distanceY = top;
-        console.log("width:", newWidth);
-        console.log("height:", newHeight);
-        console.log("left:", distanceX);
-        console.log("top:", distanceY);
+        // console.log("width:", newWidth);
+        // console.log("height:", newHeight);
+        // console.log("left:", distanceX);
+        // console.log("top:", distanceY);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -411,10 +412,10 @@ class DragResizeBox {
         );
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
         const distanceY = top;
-        console.log("width:", newWidth);
-        console.log("height:", newHeight);
-        console.log("left:", distanceX);
-        console.log("top:", distanceY);
+        // console.log("width:", newWidth);
+        // console.log("height:", newHeight);
+        // console.log("left:", distanceX);
+        // console.log("top:", distanceY);
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";

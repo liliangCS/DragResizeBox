@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能演示</title>
+    <style>
+        .box1 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(86, 245, 232);
+        }
+
+        .box2 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(191, 243, 191);
+        }
+
+        .box3 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(209, 209, 241);
+        }
+
+        .box3 .header {
+            background-color: pink;
+            height: 30px;
+        }
+    </style>
+    <script src="./dist/DragResizeBox.min.js"></script>
+</head>
+<body>
+    <div class="box1"></div>
+    <div class="box2"></div>
+    <div class="box3">
+        <div class="header"></div>
+    </div>
+
+    <script>
+        const box1El = document.querySelector(".box1");
+        const box2El = document.querySelector(".box2");
+        const box3El = document.querySelector(".box3");
+        new DragResizeBox(box1El);
+        new DragResizeBox(box2El, { left: 110, minWidth: 50, minHeight: 50});
+        new DragResizeBox(box3El, { left: 220, dragSelector: ".box3>.header"});
+    </script>
+</body>
+</html>
