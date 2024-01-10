@@ -1,15 +1,3 @@
-/**
- * 配置说明：
- * zoom: 是否开启缩放模式
- * minWidth: 最小缩放宽度，单位px
- * minHeight: 最小缩放高度，单位px
- * zIndex: 拖拽元素层级
- * dragSelector: 拖拽部分的CSS选择器，默认拖拽部分为整个元素
- * left: 初始距离浏览器窗口左边的距离，单位px
- * top: 初始距离浏览器窗口上边的距离，单位px
- * cornerSize: 角的尺寸(width=cornerSize,height:cornerSize)，单位px
- * borderSize：边的尺寸(水平边：height=borderSize; 垂直边：width=borderSize)，单位px
- */
 const defaultOptions = {
   zoom: true,
   minWidth: 0,
@@ -18,8 +6,9 @@ const defaultOptions = {
   dragSelector: null,
   left: 0,
   top: 0,
-  cornerSize: 14,
-  borderSize: 10
+  cornerSize: 16,
+  borderSize: 12,
+  center: false
 };
 
 class DragResizeBox {
@@ -35,8 +24,14 @@ class DragResizeBox {
 
   init() {
     this.domEl.style.position = "fixed";
-    this.domEl.style.left = this.options.left + "px";
-    this.domEl.style.top = this.options.top + "px";
+    if (this.options.center) {
+      const { width, height } = this.domEl.getBoundingClientRect();
+      this.domEl.style.left = `calc(50% - ${width / 2}px)`;
+      this.domEl.style.top = `calc(50% - ${height / 2}px)`;
+    } else {
+      this.domEl.style.left = this.options.left + "px";
+      this.domEl.style.top = this.options.top + "px";
+    }
     this.domEl.style.zIndex = this.options.zIndex;
     this.domEl.style.cursor = this.options.dragSelector === null ? "move" : "auto";
     this.domEl.style.overflow = "hidden";
