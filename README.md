@@ -74,5 +74,4 @@ new DragResizeBox(domEl, options);
 - `top`：数值类型，初始距离浏览器窗口上边的距离，默认值为 0（单位：px）
 - `cornerSize`：数值类型，角缩放控制区域的尺寸，默认值为 16（单位：px）
 - `borderSize`：数值类型，边缩放控制区域的尺寸，默认值为 12（单位：px）
-- `borderSize`：数值类型，边缩放控制区域的尺寸，默认值为 12（单位：px）
 - `center`：布尔类型，拖拽元素初始位置是否居中，默认值为 false
