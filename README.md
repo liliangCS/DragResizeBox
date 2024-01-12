@@ -75,3 +75,14 @@ new DragResizeBox(domEl, options);
 - `cornerSize`：数值类型，角缩放控制区域的尺寸，默认值为 16（单位：px）
 - `borderSize`：数值类型，边缩放控制区域的尺寸，默认值为 12（单位：px）
 - `center`：布尔类型，拖拽元素初始位置是否居中，默认值为 false
+
+### DragResizeBox 实例方法
+
+#### setFullScreen()
+
+`为DOM元素设置全屏。`
+
+#### exitFullScreen()
+
+`DOM元素退出全屏。`
+
