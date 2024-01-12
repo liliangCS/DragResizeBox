@@ -19,10 +19,10 @@ class DragResizeBox {
     if (this.options.dragSelector !== null && !this.dragDomEl) {
       throw new Error("Options Error: dragSelector is invalid.");
     }
-    this.init();
+    this._init();
   }
 
-  init() {
+  _init() {
     this.domEl.style.position = "fixed";
     if (this.options.center) {
       const { width, height } = this.domEl.getBoundingClientRect();
@@ -41,13 +41,13 @@ class DragResizeBox {
       this.dragDomEl.style.cursor = "move";
     }
     if (this.options.zoom) {
-      this.zoom();
+      this._zoom();
     }
-    this.drag();
+    this._drag();
   }
 
   // 获取边框宽度
-  getDomElBorderWidth() {
+  _getDomElBorderWidth() {
     const computedStyle = window.getComputedStyle(this.domEl);
     const borderLeftWidth = parseInt(computedStyle.borderLeftWidth, 10);
     const borderTopWidth = parseInt(computedStyle.borderTopWidth, 10);
@@ -61,7 +61,7 @@ class DragResizeBox {
     };
   }
 
-  drag() {
+  _drag() {
     const targetDragEl = this.dragDomEl ?? this.domEl;
     targetDragEl.addEventListener("mousedown", (event) => {
       event.stopPropagation();
@@ -84,18 +84,18 @@ class DragResizeBox {
     });
   }
 
-  zoom() {
-    this.addCorner();
-    this.addBorder();
+  _zoom() {
+    this._addCorner();
+    this._addBorder();
   }
 
   // 添加角
-  addCorner() {
+  _addCorner() {
     const leftTop = document.createElement("div");
     const rightTop = document.createElement("div");
     const rightBottom = document.createElement("div");
     const leftBottom = document.createElement("div");
-    const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this.getDomElBorderWidth();
+    const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this._getDomElBorderWidth();
 
     // leftTop：左上角
     leftTop.style.width = this.options.cornerSize + "px";
@@ -138,19 +138,19 @@ class DragResizeBox {
     this.domEl.append(rightBottom);
     this.domEl.append(leftBottom);
 
-    this.leftTopZoom(leftTop);
-    this.rightTopZoom(rightTop);
-    this.rightBottomZoom(rightBottom);
-    this.leftBottomZoom(leftBottom);
+    this._leftTopZoom(leftTop);
+    this._rightTopZoom(rightTop);
+    this._rightBottomZoom(rightBottom);
+    this._leftBottomZoom(leftBottom);
   }
 
   // 添加边
-  addBorder() {
+  _addBorder() {
     const left = document.createElement("div");
     const top = document.createElement("div");
     const right = document.createElement("div");
     const bottom = document.createElement("div");
-    const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this.getDomElBorderWidth();
+    const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this._getDomElBorderWidth();
 
     // left：左边
     left.style.width = this.options.borderSize + "px";
@@ -193,14 +193,14 @@ class DragResizeBox {
     this.domEl.append(right);
     this.domEl.append(bottom);
 
-    this.leftZoom(left);
-    this.topZoom(top);
-    this.rightZoom(right);
-    this.bottomZoom(bottom);
+    this._leftZoom(left);
+    this._topZoom(top);
+    this._rightZoom(right);
+    this._bottomZoom(bottom);
   }
 
   // 缩放：border
-  leftZoom(el) {
+  _leftZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startX = event.clientX;
@@ -221,7 +221,7 @@ class DragResizeBox {
     });
   }
 
-  topZoom(el) {
+  _topZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startY = event.clientY;
@@ -242,7 +242,7 @@ class DragResizeBox {
     });
   }
 
-  rightZoom(el) {
+  _rightZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startX = event.clientX;
@@ -266,7 +266,7 @@ class DragResizeBox {
     });
   }
 
-  bottomZoom(el) {
+  _bottomZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startY = event.clientY;
@@ -291,7 +291,7 @@ class DragResizeBox {
   }
 
   // 缩放：corner
-  leftTopZoom(el) {
+  _leftTopZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       // 记录鼠标按下时的坐标
@@ -321,7 +321,7 @@ class DragResizeBox {
     });
   }
 
-  rightTopZoom(el) {
+  _rightTopZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       // 记录鼠标按下时的坐标
@@ -354,7 +354,7 @@ class DragResizeBox {
     });
   }
 
-  rightBottomZoom(el) {
+  _rightBottomZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       // 记录鼠标按下时的坐标
@@ -390,7 +390,7 @@ class DragResizeBox {
     });
   }
 
-  leftBottomZoom(el) {
+  _leftBottomZoom(el) {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       // 记录鼠标按下时的坐标
@@ -421,6 +421,33 @@ class DragResizeBox {
         document.onmousemove = null;
       };
     });
+  }
+
+  // 设置全屏
+  setFullScreen() {
+    // 记录设置全屏时的状态
+    this.record = {
+      left: this.domEl.style.left,
+      top: this.domEl.style.top,
+      width: this.domEl.style.width,
+      height: this.domEl.style.height
+    };
+
+    this.domEl.style.left = 0;
+    this.domEl.style.top = 0;
+    this.domEl.style.width = window.innerWidth + "px";
+    this.domEl.style.height = window.innerHeight + "px";
+  }
+
+  // 退出全屏
+  exitFullScreen() {
+    if (this.record) {
+      const { left, top, width, height } = this.record;
+      this.domEl.style.left = left;
+      this.domEl.style.top = top;
+      this.domEl.style.width = width;
+      this.domEl.style.height = height;
+    }
   }
 }
 

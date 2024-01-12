@@ -1,24 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>功能演示</title>
     <style>
-        .box {
-            width: 200px;
-            height: 200px;
-            background-color: red;
-        }
+      .box {
+        width: 200px;
+        height: 200px;
+        background-color: red;
+      }
+
+      .btn2 {
+        position: fixed;
+        z-index: 10000;
+      }
     </style>
     <script src="./dist/DragResizeBox.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="box"></div>
+    <button class="btn1">设置全屏</button>
+    <button class="btn2">退出全屏</button>
 
     <script>
-        const boxEl = document.querySelector(".box");
-        new DragResizeBox(boxEl, { left: 100, top: 100 });
+      const boxEl = document.querySelector(".box");
+      const btn1El = document.querySelector(".btn1");
+      const btn2El = document.querySelector(".btn2");
+      const dragResizeBox = new DragResizeBox(boxEl, { left: 100, top: 100 });
+
+      btn1El.addEventListener("click", () => {
+        console.log(dragResizeBox);
+        dragResizeBox.setFullScreen();
+      });
+
+      btn2El.addEventListener("click", () => {
+        dragResizeBox.exitFullScreen();
+      });
     </script>
-</body>
+  </body>
 </html>

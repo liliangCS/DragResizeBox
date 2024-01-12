@@ -1,6 +1,6 @@
 {
   "name": "drag-resize-box",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "一款无任何依赖、且支持拖拽和缩放功能的原生组件。",
   "type": "module",
   "main": "dist/DragResizeBox.esm.js",
