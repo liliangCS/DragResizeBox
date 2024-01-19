@@ -16,18 +16,33 @@
         z-index: 10000;
       }
     </style>
-    <script src="./dist/DragResizeBox.min.js"></script>
+    <!-- <script src="./dist/DragResizeBox.min.js"></script> -->
   </head>
   <body>
     <div class="box"></div>
-    <button class="btn1">设置全屏</button>
-    <button class="btn2">退出全屏</button>
+    <div>
+      <button class="btn1">设置全屏</button>
+      <button class="btn2">退出全屏</button>
+    </div>
 
-    <script>
+    <div>
+      <button class="btn3">设置最小宽高: 100×100</button>
+    </div>
+
+    <script type="module">
+      import DragResizeBox from "./dist/DragResizeBox.esm.js";
+
       const boxEl = document.querySelector(".box");
       const btn1El = document.querySelector(".btn1");
       const btn2El = document.querySelector(".btn2");
-      const dragResizeBox = new DragResizeBox(boxEl, { left: 100, top: 100 });
+      const btn3El = document.querySelector(".btn3");
+      const dragResizeBox = new DragResizeBox(boxEl, {
+        left: 100,
+        top: 100,
+        drag: true,
+        limitZoomArea: ["right", "leftTop", "leftBottom", "rightTop"],
+        cornerSize: 0
+      });
 
       btn1El.addEventListener("click", () => {
         console.log(dragResizeBox);
@@ -36,6 +51,11 @@
 
       btn2El.addEventListener("click", () => {
         dragResizeBox.exitFullScreen();
+      });
+
+      btn3El.addEventListener("click", () => {
+        dragResizeBox.setMinWidth(100);
+        dragResizeBox.setMinHeight(100);
       });
     </script>
   </body>

@@ -1,4 +1,5 @@
 const defaultOptions = {
+  drag: true,
   zoom: true,
   minWidth: 0,
   minHeight: 0,
@@ -8,7 +9,8 @@ const defaultOptions = {
   top: 0,
   cornerSize: 16,
   borderSize: 12,
-  center: false
+  center: false,
+  limitZoomArea: []
 };
 
 class DragResizeBox {
@@ -33,17 +35,19 @@ class DragResizeBox {
       this.domEl.style.top = this.options.top + "px";
     }
     this.domEl.style.zIndex = this.options.zIndex;
-    this.domEl.style.cursor = this.options.dragSelector === null ? "move" : "auto";
+    this.domEl.style.cursor = this.options.dragSelector === null && this.options.drag ? "move" : "auto";
     this.domEl.style.overflow = "hidden";
     // 阻止默认拖拽行为
     this.domEl.ondragstart = (event) => event.preventDefault();
     if (this.dragDomEl) {
-      this.dragDomEl.style.cursor = "move";
+      this.dragDomEl.style.cursor = this.options.drag ? "move" : "auto";
     }
     if (this.options.zoom) {
       this._zoom();
     }
-    this._drag();
+    if (this.options.drag) {
+      this._drag();
+    }
   }
 
   // 获取边框宽度
@@ -91,112 +95,116 @@ class DragResizeBox {
 
   // 添加角
   _addCorner() {
-    const leftTop = document.createElement("div");
-    const rightTop = document.createElement("div");
-    const rightBottom = document.createElement("div");
-    const leftBottom = document.createElement("div");
     const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this._getDomElBorderWidth();
 
     // leftTop：左上角
-    leftTop.style.width = this.options.cornerSize + "px";
-    leftTop.style.height = this.options.cornerSize + "px";
-    leftTop.style.position = "absolute";
-    leftTop.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
-    leftTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
-    leftTop.style.cursor = "nw-resize";
-    // leftTop.style.backgroundColor = "green";
+    if (!this.options.limitZoomArea.includes("leftTop")) {
+      const leftTop = document.createElement("div");
+      leftTop.style.width = this.options.cornerSize + "px";
+      leftTop.style.height = this.options.cornerSize + "px";
+      leftTop.style.position = "absolute";
+      leftTop.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
+      leftTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
+      leftTop.style.cursor = "nw-resize";
+      this.domEl.append(leftTop);
+      this._leftTopZoom(leftTop);
+    }
 
     // rightTop：右上角
-    rightTop.style.width = this.options.cornerSize + "px";
-    rightTop.style.height = this.options.cornerSize + "px";
-    rightTop.style.position = "absolute";
-    rightTop.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
-    rightTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
-    rightTop.style.cursor = "ne-resize";
-    // rightTop.style.backgroundColor = "green";
+    if (!this.options.limitZoomArea.includes("rightTop")) {
+      const rightTop = document.createElement("div");
+      rightTop.style.width = this.options.cornerSize + "px";
+      rightTop.style.height = this.options.cornerSize + "px";
+      rightTop.style.position = "absolute";
+      rightTop.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
+      rightTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
+      rightTop.style.cursor = "ne-resize";
+      this.domEl.append(rightTop);
+      this._rightTopZoom(rightTop);
+    }
 
     // rightBottom：右下角
-    rightBottom.style.width = this.options.cornerSize + "px";
-    rightBottom.style.height = this.options.cornerSize + "px";
-    rightBottom.style.position = "absolute";
-    rightBottom.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
-    rightBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
-    rightBottom.style.cursor = "se-resize";
-    // rightBottom.style.backgroundColor = "green";
+    if (!this.options.limitZoomArea.includes("rightBottom")) {
+      const rightBottom = document.createElement("div");
+      rightBottom.style.width = this.options.cornerSize + "px";
+      rightBottom.style.height = this.options.cornerSize + "px";
+      rightBottom.style.position = "absolute";
+      rightBottom.style.right = -(this.options.cornerSize / 2 + borderRightWidth) + "px";
+      rightBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
+      rightBottom.style.cursor = "se-resize";
+      this.domEl.append(rightBottom);
+      this._rightBottomZoom(rightBottom);
+    }
 
     // leftBottom：左下角
-    leftBottom.style.width = this.options.cornerSize + "px";
-    leftBottom.style.height = this.options.cornerSize + "px";
-    leftBottom.style.position = "absolute";
-    leftBottom.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
-    leftBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
-    leftBottom.style.cursor = "sw-resize";
-    // leftBottom.style.backgroundColor = "green";
-
-    this.domEl.append(leftTop);
-    this.domEl.append(rightTop);
-    this.domEl.append(rightBottom);
-    this.domEl.append(leftBottom);
-
-    this._leftTopZoom(leftTop);
-    this._rightTopZoom(rightTop);
-    this._rightBottomZoom(rightBottom);
-    this._leftBottomZoom(leftBottom);
+    if (!this.options.limitZoomArea.includes("leftBottom")) {
+      const leftBottom = document.createElement("div");
+      leftBottom.style.width = this.options.cornerSize + "px";
+      leftBottom.style.height = this.options.cornerSize + "px";
+      leftBottom.style.position = "absolute";
+      leftBottom.style.left = -(this.options.cornerSize / 2 + borderLeftWidth) + "px";
+      leftBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
+      leftBottom.style.cursor = "sw-resize";
+      this.domEl.append(leftBottom);
+      this._leftBottomZoom(leftBottom);
+    }
   }
 
   // 添加边
   _addBorder() {
-    const left = document.createElement("div");
-    const top = document.createElement("div");
-    const right = document.createElement("div");
-    const bottom = document.createElement("div");
     const { borderLeftWidth, borderTopWidth, borderBottomWidth, borderRightWidth } = this._getDomElBorderWidth();
 
     // left：左边
-    left.style.width = this.options.borderSize + "px";
-    left.style.height = `calc(100% + ${borderTopWidth + borderBottomWidth}px - ${this.options.cornerSize}px)`;
-    left.style.position = "absolute";
-    left.style.left = -(this.options.borderSize / 2 + borderLeftWidth) + "px";
-    left.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
-    left.style.cursor = "col-resize";
-    // left.style.backgroundColor = "blue";
+    if (!this.options.limitZoomArea.includes("left")) {
+      const left = document.createElement("div");
+      left.style.width = this.options.borderSize + "px";
+      left.style.height = `calc(100% + ${borderTopWidth + borderBottomWidth}px - ${this.options.cornerSize}px)`;
+      left.style.position = "absolute";
+      left.style.left = -(this.options.borderSize / 2 + borderLeftWidth) + "px";
+      left.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
+      left.style.cursor = "col-resize";
+      this.domEl.append(left);
+      this._leftZoom(left);
+    }
 
     // top：上边
-    top.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
-    top.style.height = this.options.borderSize + "px";
-    top.style.position = "absolute";
-    top.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
-    top.style.top = -(this.options.borderSize / 2 + borderTopWidth) + "px";
-    top.style.cursor = "row-resize";
-    // top.style.backgroundColor = "blue";
+    if (!this.options.limitZoomArea.includes("top")) {
+      const top = document.createElement("div");
+      top.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
+      top.style.height = this.options.borderSize + "px";
+      top.style.position = "absolute";
+      top.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
+      top.style.top = -(this.options.borderSize / 2 + borderTopWidth) + "px";
+      top.style.cursor = "row-resize";
+      this.domEl.append(top);
+      this._topZoom(top);
+    }
 
     // right：右边
-    right.style.width = this.options.borderSize + "px";
-    right.style.height = `calc(100% + ${borderTopWidth + borderBottomWidth}px - ${this.options.cornerSize}px)`;
-    right.style.position = "absolute";
-    right.style.right = -(this.options.borderSize / 2 + borderRightWidth) + "px";
-    right.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
-    right.style.cursor = "col-resize";
-    // right.style.backgroundColor = "blue";
+    if (!this.options.limitZoomArea.includes("right")) {
+      const right = document.createElement("div");
+      right.style.width = this.options.borderSize + "px";
+      right.style.height = `calc(100% + ${borderTopWidth + borderBottomWidth}px - ${this.options.cornerSize}px)`;
+      right.style.position = "absolute";
+      right.style.right = -(this.options.borderSize / 2 + borderRightWidth) + "px";
+      right.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
+      right.style.cursor = "col-resize";
+      this.domEl.append(right);
+      this._rightZoom(right);
+    }
 
     // bottom：下边
-    bottom.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
-    bottom.style.height = this.options.borderSize + "px";
-    bottom.style.position = "absolute";
-    bottom.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
-    bottom.style.bottom = -(this.options.borderSize / 2 + borderBottomWidth) + "px";
-    bottom.style.cursor = "row-resize";
-    // bottom.style.backgroundColor = "blue";
-
-    this.domEl.append(left);
-    this.domEl.append(top);
-    this.domEl.append(right);
-    this.domEl.append(bottom);
-
-    this._leftZoom(left);
-    this._topZoom(top);
-    this._rightZoom(right);
-    this._bottomZoom(bottom);
+    if (!this.options.limitZoomArea.includes("bottom")) {
+      const bottom = document.createElement("div");
+      bottom.style.width = `calc(100% + ${borderLeftWidth + borderRightWidth}px - ${this.options.cornerSize}px)`;
+      bottom.style.height = this.options.borderSize + "px";
+      bottom.style.position = "absolute";
+      bottom.style.left = this.options.cornerSize / 2 - borderLeftWidth + "px";
+      bottom.style.bottom = -(this.options.borderSize / 2 + borderBottomWidth) + "px";
+      bottom.style.cursor = "row-resize";
+      this.domEl.append(bottom);
+      this._bottomZoom(bottom);
+    }
   }
 
   // 缩放：border
@@ -448,6 +456,24 @@ class DragResizeBox {
       this.domEl.style.width = width;
       this.domEl.style.height = height;
     }
+  }
+
+  // 设置最小宽度
+  setMinWidth(value) {
+    const { width } = this.domEl.getBoundingClientRect();
+    if (width < value) {
+      this.domEl.style.width = value + "px";
+    }
+    this.options.minWidth = value;
+  }
+
+  // 设置最小高度
+  setMinHeight(value) {
+    const { height } = this.domEl.getBoundingClientRect();
+    if (height < value) {
+      this.domEl.style.height = value + "px";
+    }
+    this.options.minHeight = value;
   }
 }
 

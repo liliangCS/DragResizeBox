@@ -65,7 +65,8 @@ new DragResizeBox(domEl, options);
 
 `options(可选)`：一个对象，用于提供相关配置选项。
 
-- `zoom`：布尔类型，是否开启缩放模式，默认值为 false
+- `drag`：布尔类型，是否开启拖拽模式，默认值为 true
+- `zoom`：布尔类型，是否开启缩放模式，默认值为 true
 - `minWidth`：数值类型，最小缩放宽度，默认值为 0（单位：px）
 - `minHeight`：数值类型，最小缩放高度，默认值为 0（单位：px）
 - `zIndex`：数值类型，拖拽元素层级，默认值为 9999
@@ -75,6 +76,7 @@ new DragResizeBox(domEl, options);
 - `cornerSize`：数值类型，角缩放控制区域的尺寸，默认值为 16（单位：px）
 - `borderSize`：数值类型，边缩放控制区域的尺寸，默认值为 12（单位：px）
 - `center`：布尔类型，拖拽元素初始位置是否居中，默认值为 false
+- `limitZoomArea`：数组类型，限制缩放区域，默认值为 `[]`，可填值：`left, right, top, bottom, leftTop, leftBottom, rightTop, rightBottom`
 
 ### DragResizeBox 实例方法
 
@@ -86,3 +88,10 @@ new DragResizeBox(domEl, options);
 
 `DOM元素退出全屏。`
 
+#### setMinWidth()
+
+`为DOM元素设置最小宽度，若当前宽度小于最小宽度，则立即设置DOM元素的宽度为最小宽度。`
+
+#### setMinHeight()
+
+`为DOM元素设置最小高度，若当前高度小于最小高度，则立即设置DOM元素的高度为最小高度。`
