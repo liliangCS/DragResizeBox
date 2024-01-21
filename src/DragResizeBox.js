@@ -16,6 +16,7 @@ const defaultOptions = {
 
 class DragResizeBox {
   constructor(domEl, options) {
+    this.eventCenter = {};
     this.options = Object.assign({ ...defaultOptions }, options);
     this.domEl = domEl;
     this.dragDomEl = document.querySelector(this.options.dragSelector);
@@ -213,13 +214,22 @@ class DragResizeBox {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startX = event.clientX;
-      const { width, left } = this.domEl.getBoundingClientRect();
+      const { width, height, left, top } = this.domEl.getBoundingClientRect();
 
       document.onmousemove = (event) => {
         const newWidth = Math.max(this.options.minWidth, Math.min(width + startX - event.clientX, width + left));
+        const newHeight = height;
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
-        // console.log("width:", newWidth);
-        // console.log("left:", distanceX);
+        const distanceY = top;
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_border", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.left = distanceX + "px";
       };
@@ -234,13 +244,22 @@ class DragResizeBox {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startY = event.clientY;
-      const { height, top } = this.domEl.getBoundingClientRect();
+      const { width, height, left, top } = this.domEl.getBoundingClientRect();
 
       document.onmousemove = (event) => {
+        const newWidth = width;
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
+        const distanceX = left;
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        // console.log("height:", newHeight);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_border", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.top = distanceY + "px";
       };
@@ -255,16 +274,25 @@ class DragResizeBox {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startX = event.clientX;
-      const { width, left } = this.domEl.getBoundingClientRect();
+      const { width, height, left, top } = this.domEl.getBoundingClientRect();
 
       document.onmousemove = (event) => {
         const newWidth = Math.max(
           this.options.minWidth,
           Math.min(width + event.clientX - startX, window.innerWidth - left)
         );
+        const newHeight = height;
         const distanceX = left;
-        // console.log("width:", newWidth);
-        // console.log("left:", distanceX);
+        const distanceY = top;
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_border", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.left = distanceX + "px";
       };
@@ -279,16 +307,25 @@ class DragResizeBox {
     el.addEventListener("mousedown", (event) => {
       event.stopPropagation();
       const startY = event.clientY;
-      const { height, top } = this.domEl.getBoundingClientRect();
+      const { width, height, left, top } = this.domEl.getBoundingClientRect();
 
       document.onmousemove = (event) => {
+        const newWidth = width;
         const newHeight = Math.max(
           this.options.minHeight,
           Math.min(height + event.clientY - startY, window.innerHeight - top)
         );
+        const distanceX = left;
         const distanceY = top;
-        // console.log("height:", newHeight);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_border", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.top = distanceY + "px";
       };
@@ -432,6 +469,10 @@ class DragResizeBox {
     });
   }
 
+  _createEventObj(name, data) {
+    return { name, data };
+  }
+
   // 设置全屏
   setFullScreen() {
     // 记录设置全屏时的状态
@@ -475,6 +516,16 @@ class DragResizeBox {
       this.domEl.style.height = value + "px";
     }
     this.options.minHeight = value;
+  }
+
+  // 添加事件监听
+  addEventListener(eventName, listener) {
+    this.eventCenter[eventName] = listener;
+  }
+  // 移除事件监听
+  removeEventListener(eventName) {
+    this.eventCenter[eventName] = null;
+    delete this.eventCenter[eventName];
   }
 }
 

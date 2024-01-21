@@ -27,6 +27,7 @@
 
     <div>
       <button class="btn3">设置最小宽高: 100×100</button>
+      <button class="btn4">移除resize事件</button>
     </div>
 
     <script type="module">
@@ -36,12 +37,16 @@
       const btn1El = document.querySelector(".btn1");
       const btn2El = document.querySelector(".btn2");
       const btn3El = document.querySelector(".btn3");
+      const btn4El = document.querySelector(".btn4");
       const dragResizeBox = new DragResizeBox(boxEl, {
         left: 100,
         top: 100,
-        drag: true,
-        limitZoomArea: ["right", "leftTop", "leftBottom", "rightTop"],
-        cornerSize: 0
+        drag: true
+      });
+
+      dragResizeBox.addEventListener("resize", (event) => {
+        console.log(event.name);
+        console.log(event.data);
       });
 
       btn1El.addEventListener("click", () => {
@@ -56,6 +61,10 @@
       btn3El.addEventListener("click", () => {
         dragResizeBox.setMinWidth(100);
         dragResizeBox.setMinHeight(100);
+      });
+
+      btn4El.addEventListener("click", () => {
+        dragResizeBox.removeEventListener("resize");
       });
     </script>
   </body>
