@@ -10,7 +10,8 @@ const defaultOptions = {
   cornerSize: 16,
   borderSize: 12,
   center: false,
-  limitZoomArea: []
+  limitZoomArea: [],
+  position: "fixed"
 };
 
 class DragResizeBox {
@@ -25,7 +26,7 @@ class DragResizeBox {
   }
 
   _init() {
-    this.domEl.style.position = "fixed";
+    this.domEl.style.position = this.options.position;
     if (this.options.center) {
       const { width, height } = this.domEl.getBoundingClientRect();
       this.domEl.style.left = `calc(50% - ${width / 2}px)`;

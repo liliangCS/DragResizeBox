@@ -77,6 +77,7 @@ new DragResizeBox(domEl, options);
 - `borderSize`：数值类型，边缩放控制区域的尺寸，默认值为 12（单位：px）
 - `center`：布尔类型，拖拽元素初始位置是否居中，默认值为 false
 - `limitZoomArea`：数组类型，限制缩放区域，默认值为 `[]`，可填值：`left, right, top, bottom, leftTop, leftBottom, rightTop, rightBottom`
+- `position`：字符串类型，自定义定位方式，默认值为 `fixed`，可填值：`fixed, absolute`
 
 ### DragResizeBox 实例方法
 
