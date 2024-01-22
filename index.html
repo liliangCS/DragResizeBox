@@ -5,29 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>功能演示</title>
     <style>
-      .box {
-        width: 200px;
-        height: 200px;
+      .container {
+        width: 800px;
+        height: 500px;
+        border: 1px solid #666;
+        display: flex;
+      }
+
+      .box1 {
+        flex: 1;
         background-color: red;
       }
 
-      .btn2 {
-        position: fixed;
-        z-index: 10000;
+      .box2 {
+        width: 300px;
+        height: 500px;
+        background-color: green;
+      }
+
+      .header {
+        height: 100px;
+        background-color: pink;
       }
     </style>
-    <!-- <script src="./dist/DragResizeBox.min.js"></script> -->
   </head>
   <body>
-    <div class="box"></div>
-    <div>
-      <button class="btn1">设置全屏</button>
-      <button class="btn2">退出全屏</button>
+    <div style="margin-bottom: 10px">
+      <button class="btn1">脱离</button>
+      <button class="btn2">还原</button>
     </div>
 
-    <div>
-      <button class="btn3">设置最小宽高: 100×100</button>
-      <button class="btn4">移除resize事件</button>
+    <div class="container">
+      <div class="box1"></div>
+      <div class="box2" style="background-color: aqua">
+        <div class="header"></div>
+      </div>
     </div>
 
     <script type="module">
@@ -36,39 +48,23 @@
       const boxEl = document.querySelector(".box");
       const btn1El = document.querySelector(".btn1");
       const btn2El = document.querySelector(".btn2");
-      const btn3El = document.querySelector(".btn3");
-      const btn4El = document.querySelector(".btn4");
-      const dragResizeBox = new DragResizeBox(boxEl, {
-        left: 100,
-        top: 100,
-        drag: true
-      });
 
-      dragResizeBox.addEventListener("resize", (event) => {
-        console.log(event.name);
-        console.log(event.data);
-      });
-      dragResizeBox.addEventListener("drag", (event) => {
-        console.log(event.name);
-        console.log(event.data);
-      });
+      const box2El = document.querySelector(".box2");
+
+      let dragResizeBox = null;
 
       btn1El.addEventListener("click", () => {
-        console.log(dragResizeBox);
-        dragResizeBox.setFullScreen();
+        dragResizeBox = new DragResizeBox(box2El, { center: true, dragSelector: ".box2>.header" });
+        dragResizeBox.addEventListener("resize", () => {
+          console.log("resize");
+        })
+        dragResizeBox.addEventListener("drag", () => {
+          console.log("drag");
+        })
       });
-
       btn2El.addEventListener("click", () => {
-        dragResizeBox.exitFullScreen();
-      });
-
-      btn3El.addEventListener("click", () => {
-        dragResizeBox.setMinWidth(100);
-        dragResizeBox.setMinHeight(100);
-      });
-
-      btn4El.addEventListener("click", () => {
-        dragResizeBox.removeEventListener("resize");
+        dragResizeBox.reset();
+        console.log(dragResizeBox);
       });
     </script>
   </body>

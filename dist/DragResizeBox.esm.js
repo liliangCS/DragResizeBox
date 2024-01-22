@@ -10,13 +10,22 @@ const defaultOptions = {
   cornerSize: 16,
   borderSize: 12,
   center: false,
-  limitZoomArea: [],
-  position: "fixed"
+  limitZoomArea: []
 };
 
 class DragResizeBox {
   constructor(domEl, options) {
+    // 实例状态
+    this.status = "active";
+    // 事件中心
     this.eventCenter = {};
+    // 回收中心
+    this.recycleCenter = {
+      originStyle4DomEl: null,
+      originStyle4DragDomEl: null,
+      effectDomChildren: [],
+      targetDragEl: null
+    };
     this.options = Object.assign({ ...defaultOptions }, options);
     this.domEl = domEl;
     this.dragDomEl = document.querySelector(this.options.dragSelector);
@@ -27,7 +36,13 @@ class DragResizeBox {
   }
 
   _init() {
-    this.domEl.style.position = this.options.position;
+    this.recycleCenter.originStyle4DomEl = this.domEl.attributes.style ? this.domEl.attributes.style.value : "";
+    if (this.dragDomEl) {
+      this.recycleCenter.originStyle4DragDomEl = this.dragDomEl.attributes.style
+        ? this.dragDomEl.attributes.style.value
+        : "";
+    }
+    this.domEl.style.position = "fixed";
     if (this.options.center) {
       const { width, height } = this.domEl.getBoundingClientRect();
       this.domEl.style.left = `calc(50% - ${width / 2}px)`;
@@ -68,8 +83,8 @@ class DragResizeBox {
   }
 
   _drag() {
-    const targetDragEl = this.dragDomEl ?? this.domEl;
-    targetDragEl.addEventListener("mousedown", (event) => {
+    this.recycleCenter.targetDragEl = this.dragDomEl ?? this.domEl;
+    this.recycleCenter.targetDragEl.onmousedown = (event) => {
       event.stopPropagation();
       // 记录鼠标按下时的坐标
       const startX = event.clientX;
@@ -96,7 +111,7 @@ class DragResizeBox {
       document.onmouseup = () => {
         document.onmousemove = null;
       };
-    });
+    };
   }
 
   _zoom() {
@@ -118,6 +133,7 @@ class DragResizeBox {
       leftTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
       leftTop.style.cursor = "nw-resize";
       this.domEl.append(leftTop);
+      this.recycleCenter.effectDomChildren.push(leftTop);
       this._leftTopZoom(leftTop);
     }
 
@@ -131,6 +147,7 @@ class DragResizeBox {
       rightTop.style.top = -(this.options.cornerSize / 2 + borderTopWidth) + "px";
       rightTop.style.cursor = "ne-resize";
       this.domEl.append(rightTop);
+      this.recycleCenter.effectDomChildren.push(rightTop);
       this._rightTopZoom(rightTop);
     }
 
@@ -144,6 +161,7 @@ class DragResizeBox {
       rightBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
       rightBottom.style.cursor = "se-resize";
       this.domEl.append(rightBottom);
+      this.recycleCenter.effectDomChildren.push(rightBottom);
       this._rightBottomZoom(rightBottom);
     }
 
@@ -157,6 +175,7 @@ class DragResizeBox {
       leftBottom.style.bottom = -(this.options.cornerSize / 2 + borderBottomWidth) + "px";
       leftBottom.style.cursor = "sw-resize";
       this.domEl.append(leftBottom);
+      this.recycleCenter.effectDomChildren.push(leftBottom);
       this._leftBottomZoom(leftBottom);
     }
   }
@@ -175,6 +194,7 @@ class DragResizeBox {
       left.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
       left.style.cursor = "col-resize";
       this.domEl.append(left);
+      this.recycleCenter.effectDomChildren.push(left);
       this._leftZoom(left);
     }
 
@@ -188,6 +208,7 @@ class DragResizeBox {
       top.style.top = -(this.options.borderSize / 2 + borderTopWidth) + "px";
       top.style.cursor = "row-resize";
       this.domEl.append(top);
+      this.recycleCenter.effectDomChildren.push(top);
       this._topZoom(top);
     }
 
@@ -201,6 +222,7 @@ class DragResizeBox {
       right.style.top = this.options.cornerSize / 2 - borderTopWidth + "px";
       right.style.cursor = "col-resize";
       this.domEl.append(right);
+      this.recycleCenter.effectDomChildren.push(right);
       this._rightZoom(right);
     }
 
@@ -214,6 +236,7 @@ class DragResizeBox {
       bottom.style.bottom = -(this.options.borderSize / 2 + borderBottomWidth) + "px";
       bottom.style.cursor = "row-resize";
       this.domEl.append(bottom);
+      this.recycleCenter.effectDomChildren.push(bottom);
       this._bottomZoom(bottom);
     }
   }
@@ -501,9 +524,17 @@ class DragResizeBox {
   _createEventObj(name, data) {
     return { name, data };
   }
-
+  _checkStatus() {
+    switch (this.status) {
+      case "active":
+        return;
+      case "dead":
+        throw new Error("The status of the instance is dead.");
+    }
+  }
   // 设置全屏
   setFullScreen() {
+    this._checkStatus();
     // 记录设置全屏时的状态
     this.record = {
       left: this.domEl.style.left,
@@ -520,6 +551,7 @@ class DragResizeBox {
 
   // 退出全屏
   exitFullScreen() {
+    this._checkStatus();
     if (this.record) {
       const { left, top, width, height } = this.record;
       this.domEl.style.left = left;
@@ -531,6 +563,7 @@ class DragResizeBox {
 
   // 设置最小宽度
   setMinWidth(value) {
+    this._checkStatus();
     const { width } = this.domEl.getBoundingClientRect();
     if (width < value) {
       this.domEl.style.width = value + "px";
@@ -540,6 +573,7 @@ class DragResizeBox {
 
   // 设置最小高度
   setMinHeight(value) {
+    this._checkStatus();
     const { height } = this.domEl.getBoundingClientRect();
     if (height < value) {
       this.domEl.style.height = value + "px";
@@ -549,12 +583,32 @@ class DragResizeBox {
 
   // 添加事件监听
   addEventListener(eventName, listener) {
+    this._checkStatus();
     this.eventCenter[eventName] = listener;
   }
   // 移除事件监听
   removeEventListener(eventName) {
+    this._checkStatus();
     this.eventCenter[eventName] = null;
     delete this.eventCenter[eventName];
+  }
+
+  // domEl重置为实例化之前
+  reset() {
+    this._checkStatus();
+    this.recycleCenter.effectDomChildren.forEach((childNode) => {
+      this.domEl.removeChild(childNode);
+    });
+    if (this.options.drag) {
+      this.recycleCenter.targetDragEl.onmousedown = null;
+      document.onmousemove = null;
+      document.onmouseup = null;
+    }
+    this.domEl.setAttribute("style", this.recycleCenter.originStyle4DomEl);
+    if (this.dragDomEl) {
+      this.dragDomEl.setAttribute("style", this.recycleCenter.originStyle4DragDomEl);
+    }
+    this.status = "dead";
   }
 }
 
