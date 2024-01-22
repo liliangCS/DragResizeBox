@@ -95,3 +95,41 @@ new DragResizeBox(domEl, options);
 #### setMinHeight()
 
 `为DOM元素设置最小高度，若当前高度小于最小高度，则立即设置DOM元素的高度为最小高度。`
+
+### DragResizeBox 事件
+
+`通过添加事件监听函数，你可以获取到 DOM 元素的自身的宽高以及相对于浏览器窗口的`left`和`top`值。`
+
+#### resize 事件
+
+`在DOM元素被缩放时触发。`
+
+```javascript
+const dragResizeBox = new dragResizeBox(domEl);
+
+// 添加resize事件监听
+dragResizeBox.addEventListener("resize", (event) => {
+  console.log("事件名：", event.name);
+  console.log("事件数据：", event.data);
+});
+
+// 移除resize事件监听
+dragResizeBox.removeEventListener("resize");
+```
+
+#### drag 事件
+
+`在DOM元素被拖拽时触发。`
+
+```javascript
+const dragResizeBox = new dragResizeBox(domEl);
+
+// 添加drag事件监听
+dragResizeBox.addEventListener("drag", (event) => {
+  console.log("事件名：", event.name);
+  console.log("事件数据：", event.data);
+});
+
+// 移除drag事件监听
+dragResizeBox.removeEventListener("drag");
+```
