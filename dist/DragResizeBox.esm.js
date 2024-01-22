@@ -80,6 +80,15 @@ class DragResizeBox {
       document.onmousemove = (event) => {
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, window.innerWidth - width));
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, window.innerHeight - height));
+        if (this.eventCenter.drag) {
+          const eventObj = this._createEventObj("drag", {
+            width,
+            height,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.drag(eventObj);
+        }
         this.domEl.style.left = distanceX + "px";
         this.domEl.style.top = distanceY + "px";
       };
@@ -351,10 +360,15 @@ class DragResizeBox {
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        // console.log("width:", newWidth);
-        // console.log("height:", newHeight);
-        // console.log("left:", distanceX);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_corner", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -384,10 +398,15 @@ class DragResizeBox {
         const newHeight = Math.max(this.options.minHeight, Math.min(height + startY - event.clientY, height + top));
         const distanceX = left;
         const distanceY = Math.max(0, Math.min(top + event.clientY - startY, height + top - this.options.minHeight));
-        // console.log("width:", newWidth);
-        // console.log("height:", newHeight);
-        // console.log("left:", distanceX);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_corner", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -420,10 +439,15 @@ class DragResizeBox {
         );
         const distanceX = left;
         const distanceY = top;
-        // console.log("width:", newWidth);
-        // console.log("height:", newHeight);
-        // console.log("left:", distanceX);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_corner", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
@@ -453,10 +477,15 @@ class DragResizeBox {
         );
         const distanceX = Math.max(0, Math.min(left + event.clientX - startX, width + left - this.options.minWidth));
         const distanceY = top;
-        // console.log("width:", newWidth);
-        // console.log("height:", newHeight);
-        // console.log("left:", distanceX);
-        // console.log("top:", distanceY);
+        if (this.eventCenter.resize) {
+          const eventObj = this._createEventObj("resize_corner", {
+            width: newWidth,
+            height: newHeight,
+            left: distanceX,
+            top: distanceY
+          });
+          this.eventCenter.resize(eventObj);
+        }
         this.domEl.style.width = newWidth + "px";
         this.domEl.style.height = newHeight + "px";
         this.domEl.style.left = distanceX + "px";
